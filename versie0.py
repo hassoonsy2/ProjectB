@@ -153,7 +153,7 @@ def stop():
 
 def Dashboard():
     dashboard_screen = tk.Tk()
-    path = "C:\\Users\\hasso\\Desktop\\Hu\\project B\\Gif.gif"
+
 
 
     dashboard_screen.title("Dashboard")
@@ -196,28 +196,28 @@ def Dashboard():
 
 
 
-    image1 = tk.PhotoImage(file="C:\\Users\\hasso\\Desktop\\Hu\\project B\\header(0).png")
-    image2 = tk.PhotoImage(file="C:\\Users\\hasso\\Desktop\\Hu\\project B\\header (1).png")
+    image1 = tk.PhotoImage(file="header(0).png")
+    image2 = tk.PhotoImage(file="header (1).png")
 
-    image3 = tk.PhotoImage(file="C:\\Users\\hasso\\Desktop\\Hu\\project B\\header (2).png")
+    image3 = tk.PhotoImage(file="header (2).png")
 
-    image4 = tk.PhotoImage(file="C:\\Users\\hasso\\Desktop\\Hu\\project B\\header (3).png")
+    image4 = tk.PhotoImage(file="header (3).png")
 
-    image5 = tk.PhotoImage(file="C:\\Users\\hasso\\Desktop\\Hu\\project B\\header (4).png")
+    image5 = tk.PhotoImage(file="header (4).png")
 
-    image6 = tk.PhotoImage(file="C:\\Users\\hasso\\Desktop\\Hu\\project B\\header (5).png")
+    image6 = tk.PhotoImage(file="header (5).png")
 
-    image7 = tk.PhotoImage(file="C:\\Users\\hasso\\Desktop\\Hu\\project B\\header (6).png")
+    image7 = tk.PhotoImage(file="header (6).png")
 
-    image8 = tk.PhotoImage(file="C:\\Users\\hasso\\Desktop\\Hu\\project B\\header (7).png")
+    image8 = tk.PhotoImage(file="header (7).png")
 
-    image9 = tk.PhotoImage(file="C:\\Users\\hasso\\Desktop\\Hu\\project B\\header (8).png")
+    image9 = tk.PhotoImage(file="header (8).png")
 
-    image10 = tk.PhotoImage(file="C:\\Users\\hasso\\Desktop\\Hu\\project B\\header (9).png")
+    image10 = tk.PhotoImage(file="header (9).png")
 
-    image11 = tk.PhotoImage(file="C:\\Users\\hasso\\Desktop\\Hu\\project B\\header(10).png")
+    image11 = tk.PhotoImage(file="header(10).png")
 
-    image12 = tk.PhotoImage(file="C:\\Users\\hasso\\Desktop\\Hu\\project B\\header(11).png")
+    image12 = tk.PhotoImage(file="header(11).png")
     global List_images
 
     List_images = [image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, image11, image12]
