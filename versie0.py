@@ -72,8 +72,6 @@ def get_tweets(api,username):
 
 
 
-
-
 def all_Games():
     for naam in data:
         global names
@@ -140,13 +138,6 @@ def paly():
 
 def stop():
     pygame.mixer.music.stop()
-
-
-
-
-
-
-
 
 
 
@@ -247,4 +238,3 @@ def Dashboard():
 
 
 
-Dashboard()
