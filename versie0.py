@@ -1,6 +1,4 @@
 import json
-import itk as itk
-import requests
 import tkinter as tk
 import tkinter.messagebox
 from tkinter import font
@@ -27,14 +25,7 @@ auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token_key, access_token_secret)
 api = tweepy.API(auth)
 
-#============================om data te kunnen laden ========================================================
 
- #
- # requests = requests.get("https://raw.githubusercontent.com/tijmenjoppe/AnalyticalSkills-student/master/project/data/steam.json")
- # request_text = requests.text
- # data = json.loads(request_text)
- # data_serialized = json.dump(data , open('data.json', "w"))
-#================================================================================================================
 with open("steamdata.json",encoding= "utf-8") as f:
     data = json.load(f)
     for game in data:
@@ -94,7 +85,7 @@ def back(image_nu):
     global button_back
 
     photos_label.grid_forget()
-    photos_label = tk.Label(frame4, image=List_images[image_nu-1])
+    photos_label = tk.Label(photos_frame, image=List_images[image_nu-1])
     photos_label.place(relx=0, rely=0, relwidth=1, relheight=1)
     button_forward = tk.Button(photos_label, text=">>",
                                command=lambda: forward(image_nu + 1))
@@ -105,7 +96,7 @@ def back(image_nu):
 
 
     if image_nu == List_images[0]:
-        button_back = tk.Button(photos_label, Text="<<", state=tk.DISABLED)
+        button_back = tk.Button( state=tk.DISABLED)
 
 
 
@@ -116,7 +107,7 @@ def forward(image_nu):
     global button_forward
     global button_back
     photos_label.grid_forget()
-    photos_label =tk.Label(frame4,image = List_images[image_nu+1])
+    photos_label =tk.Label(photos_frame,image = List_images[image_nu+1])
     photos_label.place(relx=0, rely=0, relwidth=1, relheight=1)
     button_forward = tk.Button(photos_label, text=">>",
                                command=lambda: forward(image_nu+1))
@@ -125,7 +116,7 @@ def forward(image_nu):
     button_back.grid(row=5, column=0)
 
     if image_nu == 10:
-        button_forward = tk.Button(photos_label, Text=">>", state=tk.DISABLED)
+        button_forward = tk.Button( state=tk.DISABLED)
 
 
 
@@ -148,42 +139,47 @@ def Dashboard():
 
 
     dashboard_screen.title("Dashboard")
+    dashboard_screen.tk.call('wm', 'iconphoto', dashboard_screen._w, tk.PhotoImage(file="1200px-Steam_icon_logo.svg.png"))
+
 
     canvas = tk.Canvas(dashboard_screen, height=HEIGHT, width=WIDTH )
+    filename = tk.PhotoImage(file="cover.png")
+    image = canvas.create_image(0,0,anchor='nw', image=filename)
     canvas.pack()
 
     eerste_spel()
     all_Games()
 
-    frame1 = tk.Label(canvas,bg= "red",text = naam, bd= 5 , font=("Helvetica",30), fg = 'Black')
-    frame1.place(relx=0.2, rely=0.11, relwidth=0.35, relheight=0.30, anchor="n")
+
+    eerste_spel_label = tk.Label(canvas,text = naam,bg = "#9429e7" , bd= 11 , font=("Helvetica",30), fg = '#0e155b')
+    eerste_spel_label.place(relx=0.2, rely=0.11, relwidth=0.25, relheight=0.20, anchor="n")
 
 
-    frame2 = tk.Frame(canvas, bg="orange")
-    frame2.place(relx=0.2, rely=0.6, relwidth=0.35, relheight=0.30, anchor="n")
-    scrollbar = tk.Scrollbar(frame2,orient="vertical" )
+    all_games_label = tk.Label(canvas, bg="#bb1a5e" ,)
+    all_games_label.place(relx=0.2, rely=0.6, relwidth=0.35, relheight=0.30, anchor="n")
+    scrollbar = tk.Scrollbar(all_games_label,orient="vertical" )
     scrollbar.pack(side = tk.RIGHT, fill = tk.Y )
-    mylist = tk.Listbox(frame2, yscrollcommand=scrollbar.set)
+    mylist = tk.Listbox(all_games_label, yscrollcommand=scrollbar.set)
     for i in data:
         names = i['name']
         mylist.insert(END ,str(names))
     mylist.pack(side=tk.BOTTOM, fill=tk.BOTH)
     scrollbar.config(command=mylist.yview)
 
-    
 
-    frame3 = tk.Frame(canvas, bg="yellow")
-    frame3.place(relx=0.65, rely=0.11, relwidth=0.35, relheight=0.30, anchor="n")
+
+
+    twittrframe = tk.Frame(canvas  )
+    twittrframe.place(relx=0.8, rely=0.2, relwidth=0.20, relheight=0.20, anchor="n")
     global twitter_message
-    twitter_message = tk.Message(frame3, bg="white", font=("Helvetica", 10))
+
+    twitter_message = tk.Message(twittrframe,bg = "#d21c59", font=("Helvetica", 10),fg = "#0e155b")
     twitter_message.place(relx=0, rely=0, relwidth=1, relheight=1)
-    global frame4
+    global photos_frame
 
 
-
-
-    frame4 = tk.Frame(canvas,)
-    frame4.place(relx=0.65, rely=0.6, relwidth=0.35, relheight=0.30, anchor="n")
+    photos_frame = tk.Frame(canvas)
+    photos_frame.place(relx=0.69, rely=0.5, relwidth=0.35, relheight=0.30, anchor="n")
 
 
 
@@ -214,21 +210,24 @@ def Dashboard():
     List_images = [image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, image11, image12]
     global photos_label
 
-    photos_label = tk.Label(frame4, image = image1)
+    photos_label = tk.Label(photos_frame, image = image1)
     photos_label.place(relx=0, rely=0, relwidth=1, relheight=1)
 
 
-    button_forward = tk.Button(photos_label, text=">>",
+    button_forward = tk.Button(photos_frame, text=">>",
                             command=lambda: forward(1))
-    button_back = tk.Button(photos_label, text="<<",
+    button_back = tk.Button(photos_frame, text="<<",
                          command=lambda: back())
     button_back.grid(row=5, column=0)
     button_forward.grid(row=5, column=2)
 
-    frame5 = tk.Frame(canvas,bg= "Black")
-    frame5.place(relx= 0.42, rely=0.41 , relwidth = 0.3 , relheight = 0.19 ,anchor = "n")
-    play_button = tk.Button(frame5,text = "Play", command= lambda :paly()).pack(pady = 20)
-    stop_button = tk.Button(frame5, text = "Stop", command= lambda :stop()).pack(pady = 20)
+
+#________________________________________________________________________________________________________________________
+    music_background = tk.PhotoImage(file = "music.png")
+    music_label = tk.Label(canvas, bg = "#353770" ,image = music_background )
+    music_label.place(relx= 0.52, rely=0.15 , relwidth = 0.15 , relheight = 0.20 ,anchor = "n" )
+    play_button = tk.Button(music_label,text = "Play", command= lambda :paly()).pack(padx = 1 ,pady = 10)
+    stop_button = tk.Button(music_label, text = "Stop", command= lambda :stop()).pack(pady = 20)
 
     get_tweets(api, "Steam")
 
@@ -237,4 +236,4 @@ def Dashboard():
 
 
 
-
+Dashboard()
