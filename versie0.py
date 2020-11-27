@@ -1,3 +1,4 @@
+import heapq
 import json
 import tkinter as tk
 import tkinter.messagebox
@@ -8,6 +9,7 @@ from TwitterAPI import TwitterAPI
 import tweepy
 import pygame
 import datetime
+
 
 
 
@@ -28,11 +30,22 @@ api = tweepy.API(auth)
 
 with open("steamdata.json",encoding= "utf-8") as f:
     data = json.load(f)
-    for game in data:
-        del game['developer'],game['publisher'],game['platforms'],game['required_age'],game['categories'], game['steamspy_tags'] ,game['achievements'],game['owners']
 
-with open("newsteamdata.jason","w") as f:
-    json.dump(data,f , indent=10)
+
+
+def sorted_data():
+    new_data= []
+    for game in data:
+        new_data.append((game['appid'] , game['name'], game['positive_ratings'],game['average_playtime'] ,game['release_date'],game['negative_ratings'] , game))
+    all_data = sorted(new_data)
+    all_games_gesorteerd = []
+    for items in all_data:
+        all_games_gesorteerd.append(items[6])
+
+
+    return all_games_gesorteerd
+
+
 
 
 
@@ -173,7 +186,7 @@ def Dashboard():
     twittrframe.place(relx=0.8, rely=0.2, relwidth=0.20, relheight=0.20, anchor="n")
     global twitter_message
 
-    twitter_message = tk.Message(twittrframe,bg = "#d21c59", font=("Helvetica", 10),fg = "#0e155b")
+    twitter_message = tk.Message(twittrframe,bg = "#d21c59", font=("Helvetica", 10),fg = "#ffffff")
     twitter_message.place(relx=0, rely=0, relwidth=1, relheight=1)
     global photos_frame
 
