@@ -46,33 +46,3 @@ Hierna kunnen de python bestanden gedraaid worden in Python 3.
 * **Maik Brand**  - [Github](https://github.com/maikbrand1)
 * **Mohammad charef**  - [Github](https://github.com/MohamedCharefHU)
 
-
-
-
-
-
-
-
-
-
-
-
-
------------------------TEAM ALPHA ☺ --------
-
-#=============================STUDENTEN=================
-
-#====NAAM=============STUDENTNUMMER======================
-#KLAS SG33
-Hussin Almoustafa :
-
-Martin Rog :
-
-Fares Hamad : 1762013
-
-Maik Brand :
-
-Mohammad charef :
-===============================================================
-
-
