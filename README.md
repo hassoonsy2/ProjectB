@@ -40,9 +40,9 @@ Hierna kunnen de python bestanden gedraaid worden in Python 3.
 
 ## Authors
 
-* **Hussin Almoustafa** - [Github](https://github.com/hassoonsy2)
-* **Martin Rog**  - [Github](https://github.com/martinrog)
+* **Hussin Almoustafa**- 1776495- [Github](https://github.com/hassoonsy2)
+* **Martin Rog**- 1792195  - [Github](https://github.com/martinrog)
 * **Fares Hamad**- 1762013 - [Github](https://github.com/Fareshamad)
-* **Maik Brand**  - [Github](https://github.com/maikbrand1)
-* **Mohammad charef**  - [Github](https://github.com/MohamedCharefHU)
+* **Maik Brand**- 1793591  - [Github](https://github.com/maikbrand1)
+* **Mohammad charef** - 1763037 - [Github](https://github.com/MohamedCharefHU)
 
