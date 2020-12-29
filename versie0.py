@@ -4,49 +4,112 @@ import tkinter as tk
 import tkinter.messagebox
 from tkinter import font
 from tkinter import END
-import random
-from TwitterAPI import TwitterAPI
-import tweepy
 import pygame
 import datetime
+from keras.models import load_model
+from time import sleep
+from keras.preprocessing.image import img_to_array
+from keras.preprocessing import image
+import cv2
+import numpy as np
 
 
 
+def exit():
+    return exit()
+
+
+def face_expressions():
+    screen = tk.Tk()
 
 
 
+    face_classifier = cv2.CascadeClassifier(r'C:\\Users\\hasso\\Desktop\\Hu\\projectB\\ProjectB\\images\\haarcascade_frontalface_default.xml')
+    classifier = load_model(r'C:\\Users\\hasso\\Desktop\\Hu\\projectB\\ProjectB\\images\\Emotion_little_vgg.h5')
+
+    class_labels = ['Angry', 'Happy', 'Neutral', 'Sad', 'Surprise']
+
+    cap = cv2.VideoCapture(0)
+
+    while True:
+        # Grab a single frame of video
+        ret, frame = cap.read()
+        labels = []
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        faces = face_classifier.detectMultiScale(gray, 1.3, 5)
+
+        for (x, y, w, h) in faces:
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+            roi_gray = gray[y:y + h, x:x + w]
+            roi_gray = cv2.resize(roi_gray, (48, 48), interpolation=cv2.INTER_AREA)
+            # rect,face,image = face_detector(frame)
+
+            if np.sum([roi_gray]) != 0:
+                roi = roi_gray.astype('float') / 255.0
+                roi = img_to_array(roi)
+                roi = np.expand_dims(roi, axis=0)
+
+                # make a prediction on the ROI, then lookup the class
+
+                preds = classifier.predict(roi)[0]
+                label = class_labels[preds.argmax()]
+                label_position = (x, y)
+                cv2.putText(frame, label, label_position, cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
+            else:
+                cv2.putText(frame, 'No Face Found', (20, 60), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
+        cv2.imshow('Emotion Detector', frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+
+            break
+
+    exit_button = tk.Button(screen, text=" Exit", command=exit()).pack
+
+    cap.release()
+    tk.mainloop()
 
 
-
-consumer_key = "TC8emZYxOTWeK1mDpYe1fCzTf"
-consumer_secret = "WaIQc3VRomuTCclgJj9mnFjbdjg3aoqWeXjFKT9hDmc4wB0PoO"
-access_token_key = "1306177869916274688-GwMA12l25qRU8edvSYk6e15xoJ7Azl"
-access_token_secret = "n5mr3l7A81SHSJ9u5gM0ODETRrHVLEodlRA9VI65A6GC7"
-
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token_key, access_token_secret)
-api = tweepy.API(auth)
-
-
-with open("steamdata.json",encoding= "utf-8") as f:
+with open("steamdata.json",encoding= "utf-8" ) as f:
     data = json.load(f)
 
 
+def quick_sort(data):
+    data = [data]
+    length = len(data)
+    if length <= 1:
 
-def sorted_data():
-    new_data= []
-    for game in data:
-        new_data.append((game['appid'] , game['name'], game['positive_ratings'],game['average_playtime'] ,game['release_date'],game['negative_ratings'] , game))
-    all_data = sorted(new_data)
-    all_games_gesorteerd = []
-    for items in all_data:
-        all_games_gesorteerd.append(items[6])
+        return data
+    else:
+        pivot = data.pop()
+
+    items_greater = []
+    item_lower = []
+
+    for item in data:
+        if item > pivot:
+
+            items_greater.append(item)
+
+        else:
+            item_lower.append(item)
 
 
-    return all_games_gesorteerd
+    return quick_sort(item_lower) + pivot + quick_sort(items_greater)
 
 
-
+def binary_search_recursive(data , target):
+    data =  quick_sort(data)
+    min = 0
+    mid = ((len(data) - 1) + min) // 2
+    if len(data) != 0:
+        if target == data[mid]:
+            return True
+        elif target > data[mid]:
+            data = data[mid + 1:]
+            return binary_search_recursive(data, target)
+        elif target <data[mid]:
+            data = data[0: mid]
+            return binary_search_recursive(data, target)
+    return False
 
 
 def eerste_spel():
@@ -55,24 +118,6 @@ def eerste_spel():
     return naam
 
 
-def get_tweets(api,username):
-
-    page = 1
-    deadend = False
-    tweetlist = []
-    new_tweets = api.user_timeline(username, page=page)
-    for tweet in new_tweets:
-        if (datetime.datetime.now() - tweet.created_at).days < 14:
-            text = tweet.text
-            tweetlist.append(text)
-            page = page + 1
-
-    aantaltweets = len(tweetlist)
-    x = random.randrange(0, aantaltweets)
-    twitter_message.config(text=tweetlist[x])
-    twitter_message.after(8000, lambda: get_tweets(api, "Steam"))
-
-    return tweetlist
 
 
 
@@ -179,15 +224,6 @@ def Dashboard():
     mylist.pack(side=tk.BOTTOM, fill=tk.BOTH)
     scrollbar.config(command=mylist.yview)
 
-
-
-
-    twittrframe = tk.Frame(canvas  )
-    twittrframe.place(relx=0.8, rely=0.2, relwidth=0.20, relheight=0.20, anchor="n")
-    global twitter_message
-
-    twitter_message = tk.Message(twittrframe,bg = "#d21c59", font=("Helvetica", 10),fg = "#ffffff")
-    twitter_message.place(relx=0, rely=0, relwidth=1, relheight=1)
     global photos_frame
 
 
@@ -234,19 +270,19 @@ def Dashboard():
     button_back.grid(row=5, column=0)
     button_forward.grid(row=5, column=2)
 
-
-#________________________________________________________________________________________________________________________
     music_background = tk.PhotoImage(file = "music.png")
     music_label = tk.Label(canvas, bg = "#353770" ,image = music_background )
     music_label.place(relx= 0.52, rely=0.15 , relwidth = 0.15 , relheight = 0.20 ,anchor = "n" )
     play_button = tk.Button(music_label,text = "Play", command= lambda :paly()).pack(padx = 1 ,pady = 10)
     stop_button = tk.Button(music_label, text = "Stop", command= lambda :stop()).pack(pady = 20)
 
-    get_tweets(api, "Steam")
+
+    face_button = tk.Button(canvas, text = "Face expressions" ,  command= lambda  :face_expressions())
+    face_button.place(relx=0.8, rely=0.1, relwidth=0.20, relheight=0.20, anchor="n")
+
 
 
     tk.mainloop()
-
 
 
 Dashboard()
