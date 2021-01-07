@@ -10,8 +10,8 @@ num_classes = 5
 img_rows,img_cols = 48,48
 batch_size = 32
 
-train_data_dir = 'C:\\Users\\hasso\\Desktop\\Hu\\projectB\\ProjectB\\images\\train'
-validation_data_dir = 'C:\\Users\\hasso\\Desktop\\Hu\\projectB\\ProjectB\\images\\validation'
+train_data_dir = '.\\images\\train'
+validation_data_dir = '.\\images\\validation'
 
 train_datagen = ImageDataGenerator(
 					rescale=1./255,

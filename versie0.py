@@ -20,12 +20,8 @@ def exit():
 
 
 def face_expressions():
-    screen = tk.Tk()
-
-
-
-    face_classifier = cv2.CascadeClassifier(r'C:\\Users\\hasso\\Desktop\\Hu\\projectB\\ProjectB\\images\\haarcascade_frontalface_default.xml')
-    classifier = load_model(r'C:\\Users\\hasso\\Desktop\\Hu\\projectB\\ProjectB\\images\\Emotion_little_vgg.h5')
+    face_classifier = cv2.CascadeClassifier(r'.\\images\\haarcascade_frontalface_default.xml')
+    classifier = load_model(r'.\\images\\Emotion_little_vgg.h5')
 
     class_labels = ['Angry', 'Happy', 'Neutral', 'Sad', 'Surprise']
 
@@ -59,57 +55,42 @@ def face_expressions():
                 cv2.putText(frame, 'No Face Found', (20, 60), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
         cv2.imshow('Emotion Detector', frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
-
+            cv2.destroyAllWindows()
             break
 
-    exit_button = tk.Button(screen, text=" Exit", command=exit()).pack
+
 
     cap.release()
-    tk.mainloop()
+
 
 
 with open("steamdata.json",encoding= "utf-8" ) as f:
     data = json.load(f)
 
 
-def quick_sort(data):
-    data = [data]
-    length = len(data)
-    if length <= 1:
 
-        return data
-    else:
-        pivot = data.pop()
+def partition(data, begin, end):
+    pivot_idx = begin
+    for i in range(begin+1, end+1):
+        if data[i]["name"] <= data[begin]["name"]:
+            pivot_idx += 1
+            data[i], data[pivot_idx] = data[pivot_idx], data[i]
+    data[pivot_idx], data[begin] = data[begin], data[pivot_idx]
+    return pivot_idx
 
-    items_greater = []
-    item_lower = []
+def quick_sort_recursion(data,begin,end):
+    if begin >= end:
+        return
+    pivot_idx = partition(data, begin, end)
+    quick_sort_recursion(data, begin, pivot_idx - 1)
+    quick_sort_recursion(data, pivot_idx + 1, end)
 
-    for item in data:
-        if item > pivot:
+def quick_sort(data, begin=0, end=None):
 
-            items_greater.append(item)
+    if end is None:
+        end = len(data) - 1
+        return quick_sort_recursion(data, begin, end)
 
-        else:
-            item_lower.append(item)
-
-
-    return quick_sort(item_lower) + pivot + quick_sort(items_greater)
-
-
-def binary_search_recursive(data , target):
-    data =  quick_sort(data)
-    min = 0
-    mid = ((len(data) - 1) + min) // 2
-    if len(data) != 0:
-        if target == data[mid]:
-            return True
-        elif target > data[mid]:
-            data = data[mid + 1:]
-            return binary_search_recursive(data, target)
-        elif target <data[mid]:
-            data = data[0: mid]
-            return binary_search_recursive(data, target)
-    return False
 
 
 def eerste_spel():
@@ -283,6 +264,5 @@ def Dashboard():
 
 
     tk.mainloop()
-
 
 Dashboard()
