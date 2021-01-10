@@ -12,6 +12,10 @@ from keras.preprocessing.image import img_to_array
 from keras.preprocessing import image
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
+
+
+
 
 
 
@@ -91,15 +95,31 @@ def quick_sort(data, begin=0, end=None):
         end = len(data) - 1
         return quick_sort_recursion(data, begin, end)
 
+def quick_sort1(sequence):
+    length = len(sequence)
+    if length <= 1:
+        return sequence
+    else:
+        pivot = sequence.pop()
+
+    items_greater = []
+    items_lower = []
+
+    for item in sequence:
+        if item > pivot:
+            items_greater.append(item)
+
+        else:
+            items_lower.append(item)
+
+    return quick_sort1(items_lower) + [pivot] + quick_sort1(items_greater)
+
 
 
 def eerste_spel():
     global naam
     naam = data[0]['name']
     return naam
-
-
-
 
 
 def all_Games():
@@ -110,6 +130,173 @@ def all_Games():
 
 
 
+
+
+def mean(lst):
+    lst = quick_sort1(lst)
+    A = float(len(lst))
+    for i in range(len(lst)):
+        B =sum(lst)
+    C = B / A
+    return C
+
+
+
+def rnge(lst):
+
+    list = quick_sort1(lst)
+    grooste_value = int(max(list))
+    klienste_value = int(min(list))
+    X = int(grooste_value - klienste_value)
+    return X
+
+
+
+def median(lst):
+    list = quick_sort1(lst)
+
+    if len(list) % 2 == 0:
+        mid = list[len(list) // 2]
+        mid2 = list[len(list) // 2 - 1]
+        median = float(mid + mid2) / 2
+        return float(median)
+    else:
+        median = float(list[len(list) // 2])
+        return float(median)
+
+
+
+
+def q1(lst):
+    list = quick_sort1(lst)
+    max = len(list) // 2
+    list = list[:max]
+    q = median(list)
+
+    return q
+
+
+def q3(lst):
+    list = quick_sort1(lst)
+    max = len(list) // 2
+
+    if len(list) % 2 == 0 :
+        list = list[max:]
+        q = float(median(list))
+        return q
+
+    else:
+        list = list[max+1 :]
+        q = float(median(list))
+        return q
+
+
+
+def var(lst):
+    list = quick_sort1(lst)
+    gemiddelde = float(mean(list))
+    n = float(len(list))
+    A = [(nummer - gemiddelde) ** 2 for nummer in list]
+    B = sum(A) / n
+    return float(B)
+
+
+
+def std(lst):
+    list = quick_sort1(lst)
+    variante = var(list)
+    sqr_num = float(variante ** 0.5)
+    return sqr_num
+
+
+
+def freq(lst):
+
+    list = quick_sort1(lst)
+    freqs = dict()
+
+    for nummer in list:
+        if (nummer in freqs):
+            freqs[nummer] += 1
+        else:
+            freqs[nummer] = 1
+
+    return freqs
+
+
+
+def modes(lst):
+    modi = []
+    list = quick_sort1(lst)
+    count = {}
+    for nummer in list:
+        count[nummer] = count.get(nummer,0) +1
+        count[nummer]+=1
+    mod = max(count.values())
+    for nummer, freq in count.items():
+        if freq == mod:
+            modi.append(nummer)
+    return quick_sort1(lst)
+
+
+def describ(lst):
+    rang = rnge(lst)
+    mean1 = mean(lst)
+    variantie = var(lst)
+    standaard = std(lst)
+    freq1 = freq(lst)
+    modus = modes(lst)
+    gemiddeled = median(lst)
+    eerste_kwartal = q1(lst)
+    derde_kwartal = q3(lst)
+    y = f""" Data Beschrijving : 
+    Rang : {rang}  
+    Mean : {mean1} 
+    Var :  {variantie} 
+    Std : {standaard}
+    Freq : {freq1}
+    Modes : {modus}
+    Median : {gemiddeled}
+    q1 : {eerste_kwartal}
+    Q3 : {derde_kwartal}
+    """
+    return print(y)
+
+def beschrijving_postive():
+    t = []
+    for i in range(10):
+        for x in data:
+            y = x["positive_ratings"]
+            t.append(y)
+
+    return describ(t[:992])
+
+def beschrijving_nagtiv():
+    t = []
+    for i in range(10):
+        for x in data:
+            y = x["negative_ratings"]
+            t.append(y)
+
+    describ(t[:992])
+
+def beschrijving_price():
+    t = []
+    for i in range(10):
+        for x in data:
+            y = x["price"]
+            t.append(y)
+
+    describ(t[:992])
+
+def beschrijving_avr_playtim():
+    t = []
+    for i in range(10):
+        for x in data:
+            y = x["average_playtime"]
+            t.append(y)
+
+    describ(t[:992])
 
 
 
@@ -266,3 +453,4 @@ def Dashboard():
     tk.mainloop()
 
 Dashboard()
+
