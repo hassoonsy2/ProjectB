@@ -12,15 +12,17 @@ from keras.preprocessing.image import img_to_array
 from keras.preprocessing import image
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
+import RPi.GPIO as GPIO
+import time
+GPIO.setmode( GPIO.BCM )
+GPIO.setwarnings( 0 )
 
 
 
 
 
 
-def exit():
-    return exit()
 
 
 def face_expressions():
@@ -260,6 +262,8 @@ def describ(lst):
     q1 : {eerste_kwartal}
     Q3 : {derde_kwartal}
     """
+
+
     return print(y)
 
 def beschrijving_postive():
@@ -287,6 +291,7 @@ def beschrijving_price():
             y = x["price"]
             t.append(y)
 
+
     describ(t[:992])
 
 def beschrijving_avr_playtim():
@@ -299,6 +304,60 @@ def beschrijving_avr_playtim():
     describ(t[:992])
 
 
+def switch():
+    button1 = 25
+    button2 = 24
+    GPIO.setup(button1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(button2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    while True:
+        if (GPIO.input(button1)):
+            back()
+        elif(GPIO.input( button2 )):
+           forward(1)
+
+
+def statstiek_price():
+    t = []
+    for i in range(10):
+        for x in data:
+            y = x["price"]
+            t.append(y)
+    r = freq(t[:900])
+    print(r)
+    y = r.values()
+    x = r.keys()
+    print(x)
+    print(y)
+    dev_x = x
+    dev_y = y
+
+    plt.plot(dev_x, dev_y)
+    plt.title("Prijs digram ")
+    plt.xlabel("spel prijs")
+    plt.ylabel("prijs Freq")
+    plt.show()
+
+def statstiek_postive():
+    t = []
+    for i in range(10):
+        for x in data:
+            y = x["positive_ratings"]
+            t.append(y)
+    r = freq(t[:900])
+    print(r)
+
+    y = r.values()
+    x = r.keys()
+    print(max(x))
+    print(max(y))
+    dev_x = x
+    dev_y = y
+
+    plt.plot(dev_x, dev_y)
+    plt.title("Prijs digram ")
+    plt.xlabel("spel prijs")
+    plt.ylabel("prijs Freq")
+    plt.show()
 
 HEIGHT = 700
 WIDTH = 1200
@@ -450,7 +509,7 @@ def Dashboard():
 
 
 
+
     tk.mainloop()
 
 Dashboard()
-
