@@ -1,4 +1,4 @@
-import heapq
+
 import json
 import tkinter as tk
 import tkinter.messagebox
@@ -13,12 +13,9 @@ from keras.preprocessing import image
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
-import RPi.GPIO as GPIO
-import time
-GPIO.setmode( GPIO.BCM )
-GPIO.setwarnings( 0 )
 
-
+from matplotlib.ticker import LinearLocator
+from matplotlib import cm
 
 
 
@@ -34,7 +31,7 @@ def face_expressions():
     cap = cv2.VideoCapture(0)
 
     while True:
-        # Grab a single frame of video
+
         ret, frame = cap.read()
         labels = []
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -44,22 +41,27 @@ def face_expressions():
             cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
             roi_gray = gray[y:y + h, x:x + w]
             roi_gray = cv2.resize(roi_gray, (48, 48), interpolation=cv2.INTER_AREA)
-            # rect,face,image = face_detector(frame)
+
 
             if np.sum([roi_gray]) != 0:
                 roi = roi_gray.astype('float') / 255.0
                 roi = img_to_array(roi)
                 roi = np.expand_dims(roi, axis=0)
 
-                # make a prediction on the ROI, then lookup the class
+
+
 
                 preds = classifier.predict(roi)[0]
+                global label
                 label = class_labels[preds.argmax()]
+
                 label_position = (x, y)
                 cv2.putText(frame, label, label_position, cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
             else:
                 cv2.putText(frame, 'No Face Found', (20, 60), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
         cv2.imshow('Emotion Detector', frame)
+
+
         if cv2.waitKey(1) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
             break
@@ -256,111 +258,182 @@ def describ(lst):
     Mean : {mean1} 
     Var :  {variantie} 
     Std : {standaard}
-    Freq : {freq1}
-    Modes : {modus}
+    Freq : \n{freq1}\n
+    Modes : \n{modus}\n
     Median : {gemiddeled}
     q1 : {eerste_kwartal}
     Q3 : {derde_kwartal}
     """
 
 
-    return print(y)
+    return y
 
 def beschrijving_postive():
     t = []
-    for i in range(10):
-        for x in data:
-            y = x["positive_ratings"]
-            t.append(y)
 
-    return describ(t[:992])
+    for x in data:
+        y = x["positive_ratings"]
+        t.append(y)
 
-def beschrijving_nagtiv():
-    t = []
-    for i in range(10):
-        for x in data:
-            y = x["negative_ratings"]
-            t.append(y)
+    return describ(t[:900])
 
-    describ(t[:992])
 
 def beschrijving_price():
     t = []
-    for i in range(10):
-        for x in data:
-            y = x["price"]
-            t.append(y)
+
+    for x in data:
+        y = x["price"]
+        t.append(y)
 
 
-    describ(t[:992])
+    return describ(t[:900])
 
 def beschrijving_avr_playtim():
     t = []
-    for i in range(10):
-        for x in data:
-            y = x["average_playtime"]
-            t.append(y)
 
-    describ(t[:992])
+    for x in data:
+        y = x["average_playtime"]
+        t.append(y)
 
+    return describ(t[:900])
 
-def switch():
-    button1 = 25
-    button2 = 24
-    GPIO.setup(button1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    GPIO.setup(button2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    while True:
-        if (GPIO.input(button1)):
-            back()
-        elif(GPIO.input( button2 )):
-           forward(1)
 
 
 def statstiek_price():
+    HEIGHT = 480
+    WIDTH = 640
+    screen = tk.Toplevel()
+    screen.title("Steam Statistics")
+    screen.tk.call('wm', 'iconphoto', screen._w, tk.PhotoImage(file="1200px-Steam_icon_logo.svg.png"))
+
     t = []
-    for i in range(10):
-        for x in data:
-            y = x["price"]
-            t.append(y)
+    for x in data:
+        y = x["price"]
+        t.append(y)
     r = freq(t[:900])
-    print(r)
     y = r.values()
     x = r.keys()
-    print(x)
-    print(y)
     dev_x = x
     dev_y = y
-
     plt.plot(dev_x, dev_y)
     plt.title("Prijs digram ")
     plt.xlabel("spel prijs")
     plt.ylabel("prijs Freq")
-    plt.show()
+    plt.savefig('price2.png')
+    canvas = tk.Canvas(screen, height=HEIGHT, width=WIDTH)
+    filename = tk.PhotoImage(file="price1.png")
+    image = canvas.create_image(0, 0, anchor='nw', image=filename)
+    canvas.pack()
+
+    screen.mainloop()
+
+
+
+
 
 def statstiek_postive():
+    HEIGHT = 480
+    WIDTH = 640
+    screen = tk.Toplevel()
+    screen.title("Steam Statistics")
+    screen.tk.call('wm', 'iconphoto', screen._w, tk.PhotoImage(file="1200px-Steam_icon_logo.svg.png"))
     t = []
-    for i in range(10):
-        for x in data:
-            y = x["positive_ratings"]
-            t.append(y)
-    r = freq(t[:900])
-    print(r)
+    for x in data:
+        y = x["positive_ratings"]
+        t.append(y)
+    x = ["CS-GO", "Dota2", "Team\n Fortress2","PLAYER-\nUNKNOWN'S","Garry's Mod" ]
+    per1 = [2644404 ,863507,515879,496184,363721]
+    plt.bar(x,per1,color ="purple")
+    plt.title("Top 5 Ratings spellen ")
 
-    y = r.values()
-    x = r.keys()
-    print(max(x))
-    print(max(y))
-    dev_x = x
-    dev_y = y
+    plt.ylabel("Rating in miljoenen")
 
-    plt.plot(dev_x, dev_y)
-    plt.title("Prijs digram ")
-    plt.xlabel("spel prijs")
-    plt.ylabel("prijs Freq")
-    plt.show()
+    plt.savefig('Top54.png')
+    canvas = tk.Canvas(screen, height=HEIGHT, width=WIDTH)
+    filename = tk.PhotoImage(file="Top5.png")
+    image = canvas.create_image(0, 0, anchor='nw', image=filename)
+    canvas.pack()
+
+    screen.mainloop()
+
+def statstiek_avrage():
+    HEIGHT = 480
+    WIDTH = 640
+    screen = tk.Toplevel()
+    screen.title("Steam Statistics")
+    screen.tk.call('wm', 'iconphoto', screen._w, tk.PhotoImage(file="1200px-Steam_icon_logo.svg.png"))
+
+    labels = 'The Abbey of\n Crime Extensum', 'The Banner\n Saga: Factions', 'The Secret of\n Tremendous \n Corporation ', 'PRICE   '
+    sizes = [43, 22, 22, 13]
+    explode = (0, 0.1, 0, 0)
+
+    fig1, ax1 = plt.subplots()
+    ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
+            shadow=True, startangle=90)
+    ax1.axis('equal')
+    plt.title("Top 4 games met lange speeltijd")
+    plt.savefig('Top44.png')
+    canvas = tk.Canvas(screen, height=HEIGHT, width=WIDTH)
+    filename = tk.PhotoImage(file="Top44.png")
+    image = canvas.create_image(0, 0, anchor='nw', image=filename)
+    canvas.pack()
+
+    screen.mainloop()
+
+
+
 
 HEIGHT = 700
 WIDTH = 1200
+def do_something(label,text):
+
+    label.configure(text=text)
+def exit1():
+    return exit()
+
+
+def statistics():
+    top = tk.Toplevel()
+
+    top.title("Steam Statistics")
+    top.tk.call('wm', 'iconphoto', top._w, tk.PhotoImage(file="1200px-Steam_icon_logo.svg.png"))
+
+    canvas = tk.Canvas(top, height=HEIGHT, width=WIDTH)
+    filename = tk.PhotoImage(file="cover.png")
+    image = canvas.create_image(0, 0, anchor='nw', image=filename)
+    canvas.pack()
+
+
+    label = tk.Label(canvas,bd = 5, text = "Welcome in steam - Statistics " , font=("Courier", 10) , bg = "#A2D6EC")
+    label.place(relx=0.50, rely=0.10, relwidth=0.90, relheight=0.7,anchor="n")
+
+
+    button1 = tk.Button(canvas, text = " Top 5 Games",command = lambda :statstiek_postive(), bg = "#B456FF")
+    button1.place(relx=0.80, rely=0.83, relwidth=0.10, relheight=0.10, anchor="n")
+
+    button2 = tk.Button(canvas, text=" Games prijzen" , command = lambda : statstiek_price() , bg = "#B456FF")
+    button2.place(relx=0.69, rely=0.83, relwidth=0.10, relheight=0.10, anchor="n")
+
+    button3 = tk.Button(canvas, text=" Top 4 Games met lange speltijden" , command = lambda : statstiek_avrage(), bg = "#B456FF")
+    button3.place(relx=0.14, rely=0.83, relwidth=0.18, relheight=0.10, anchor="n")
+
+    button4 = tk.Button(canvas, text = "Describ positive ratings" , command = lambda : do_something(label, beschrijving_postive()) ,bg = "#B456FF")
+    button4.place(relx=0.55, rely=0.83, relwidth=0.15, relheight=0.10, anchor="n")
+    button5 = tk.Button(canvas, text="Describ average_playtime",
+                        command=lambda: do_something(label, beschrijving_avr_playtim()), bg = "#B456FF")
+    button5.place(relx=0.31, rely=0.83, relwidth=0.15, relheight=0.10, anchor="n")
+
+    button6 = tk.Button(canvas, text="Describ Price",
+                       command=lambda: do_something(label, beschrijving_price()), bg = "#B456FF")
+    button6.place(relx=0.44, rely=0.83, relwidth=0.10, relheight=0.10, anchor="n")
+
+    button7 = tk.Button(canvas, text = "Exit", command = lambda: exit1(),  bg = "#B456FF")
+    button7.place(relx=0.90, rely=0.83, relwidth=0.10, relheight=0.10, anchor="n")
+
+
+
+
+    top.mainloop()
 
 def back(image_nu):
 
@@ -505,7 +578,10 @@ def Dashboard():
 
 
     face_button = tk.Button(canvas, text = "Face expressions" ,  command= lambda  :face_expressions())
-    face_button.place(relx=0.8, rely=0.1, relwidth=0.20, relheight=0.20, anchor="n")
+    face_button.place(relx=0.8, rely=0.1, relwidth=0.10, relheight=0.10, anchor="n")
+
+    Statstiek_button = tk.Button(canvas, text = "Go Statistics", command = lambda : statistics())
+    Statstiek_button.place(relx=0.8, rely=0.30, relwidth=0.10, relheight=0.10, anchor="n")
 
 
 
