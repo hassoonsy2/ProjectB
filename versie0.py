@@ -204,7 +204,7 @@ def afstand():
             color_green(clock_pin, data_pin, 1, n=9)
             pass
 
-            return y
+        return y
 
 
 def apa102_send_bytes(clock_pin, data_pin, bytes):
