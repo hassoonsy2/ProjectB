@@ -38,7 +38,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(0)
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(0)
-
+#Hier bij wordt de pinnen gegeven & klaar gemaakt
 clock_pin = 19
 data_pin = 26
 data_pin1 = 13
@@ -56,6 +56,7 @@ GPIO.setup(data_pin, GPIO.OUT)
 
 
 def servo_rechts():
+    #Een functie waar bij servo naar recht wordt gedried
     p = GPIO.PWM(25, 50)
     p.start(2)
     p.ChangeDutyCycle(2)
@@ -67,6 +68,7 @@ def servo_rechts():
 
 
 def servo_links():
+    # Een functie waar bij servo naar Links wordt gedried
     p = GPIO.PWM(25, 50)
     p.start(12)
     p.ChangeDutyCycle(12)
@@ -78,6 +80,7 @@ def servo_links():
 
 
 def servo_midden():
+    # Een functie waar bij servo naar midden wordt gedried
     p = GPIO.PWM(25, 50)
     p.start(7)
     p.ChangeDutyCycle(7)
@@ -89,6 +92,7 @@ def servo_midden():
 
 
 def hc595(shift_clock_pin, latch_clock_pin, data_pin1, value, delay):
+    #Een functie om schuif register te gebruiken met afstandsensor
     for i in range(8):
 
         byte = [int(z) for z in bin(value)[2:].zfill(8)]
@@ -110,6 +114,8 @@ GPIO.setup(sr04_echo, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 
 def sr04(trig_pin, echo_pin):
+    #functie om de distance te uit printen door gebruik maken van afstandsensor
+
     GPIO.output(sr04_trig, GPIO.HIGH)
     time.sleep(0.00001)
     GPIO.output(sr04_trig, GPIO.LOW)
@@ -123,12 +129,13 @@ def sr04(trig_pin, echo_pin):
 
 
 def afstand():
-    print(sr04(sr04_trig, sr04_echo))
+    #Een Dichthied meter waar bij de lampjes worden aan en uit op basis van de distance
+    y = sr04(sr04_trig, sr04_echo)
     delay = 0.0009
 
     time.sleep(1)
 
-    while True:
+    for x in range(0, 60):
 
         if sr04(sr04_trig, sr04_echo) <= 5:
 
@@ -189,9 +196,19 @@ def afstand():
             hc595(shift_clock_pin, latch_clock_pin, data_pin1, 4, delay)
             hc595(shift_clock_pin, latch_clock_pin, data_pin1, 2, delay)
             hc595(shift_clock_pin, latch_clock_pin, data_pin1, 1, delay)
+            break
+        if y <= 5.0:
+            color_red(clock_pin, data_pin, 1, n=9)
+            tk.messagebox.showwarning("Afstand ", "Je bent te dicht bij neem afstand")
+        else:
+            color_green(clock_pin, data_pin, 1, n=9)
+            pass
+
+            return y
 
 
 def apa102_send_bytes(clock_pin, data_pin, bytes):
+    #Functie om neopixel te gebruiken
     for byte in bytes:
         for j in byte:
             Binary_number = [int(i) for i in bin(j)[2:].zfill(8)]
@@ -206,7 +223,7 @@ def apa102_send_bytes(clock_pin, data_pin, bytes):
 
                 GPIO.output(clock_pin, GPIO.LOW)
 
-
+#Hier bij zijn functie gemaakt om neopixel te gebruiken wanner een gebruiken een intractie neemt met de dashboard
 def apa102(clock_pin, data_pin, colors):
     Signal = [[0b000000000, 0b000000000, 0b000000000, 0b000000000]]
 
@@ -228,7 +245,7 @@ red = [0, 0, 255]
 pink = [255, 0, 255]
 cyan = [147, 112, 219]
 blue2 = [255, 140, 0]
-
+green = [0, 255, 0]
 
 def colors(x, n, off):
     result = []
@@ -238,40 +255,79 @@ def colors(x, n, off):
     return result
 
 
-def Vlag_cyan(clock_pin, data_pin, delay, n=9):
+def color_cyan(clock_pin, data_pin, delay, n=9):
     for i in range(8):
         for x in range(n):
             apa102(clock_pin, data_pin, colors(x, n, cyan))
 
 
-def Vlag_blue(clock_pin, data_pin, delay, n=9):
+def color_blue(clock_pin, data_pin, delay, n=9):
     for i in range(8):
         for x in range(n):
             apa102(clock_pin, data_pin, colors(x, n, blue))
 
 
-def Vlag_pink(clock_pin, data_pin, delay, n=9):
+def color_pink(clock_pin, data_pin, delay, n=9):
     for i in range(8):
         for x in range(n):
             apa102(clock_pin, data_pin, colors(x, n, pink))
 
 
-def Vlag_red(clock_pin, data_pin, delay, n=9):
+def color_red(clock_pin, data_pin, delay, n=9):
     for i in range(8):
         for x in range(n):
             apa102(clock_pin, data_pin, colors(x, n, red))
 
 
-def Vlag_wit(clock_pin, data_pin, delay, n=9):
+def color_wit(clock_pin, data_pin, delay, n=9):
     for i in range(8):
         for x in range(n):
             apa102(clock_pin, data_pin, colors(x, n, wit))
 
 
-def Vlag_blue2(clock_pin, data_pin, delay, n=9):
+def color_blue2(clock_pin, data_pin, delay, n=9):
     for i in range(8):
         for x in range(n):
             apa102(clock_pin, data_pin, colors(x, n, blue2))
+
+
+def color_green(clock_pin, data_pin, delay, n=9):
+    for i in range(8):
+        for x in range(n):
+            apa102(clock_pin, data_pin, colors(x, n, green))
+
+
+def switches():
+    led = 18
+    switch = 23
+    switch2 = 24
+    status = " "
+
+    GPIO.setup(led, GPIO.OUT)
+    GPIO.setup(switch, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(switch2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    tk.messagebox.showinfo("Status", "Graag uw status invoeren")
+
+
+    while status == " ":
+        if (GPIO.input(switch)):
+            GPIO.output(led, GPIO.HIGH)
+            status = "ONLINE"
+            color_green(clock_pin, data_pin, 1, n=9)
+            tk.messagebox.showinfo("status", " U bent online")
+
+            time.sleep(0.5)
+
+
+        elif (GPIO.input(switch2)):
+            GPIO.output(led, GPIO.LOW)
+            color_red(clock_pin, data_pin, 1, n=9)
+            tk.messagebox.showinfo("status", " U bent offline")
+
+            status = "OFFLINE"
+            time.sleep(0.5)
+
+    return status
 #----------------------------------------------------------------------------------------------------
 """ 
 
@@ -280,6 +336,8 @@ def Vlag_blue2(clock_pin, data_pin, delay, n=9):
 
 """
 def face_expressions():
+    #Een fuctie die gebruikt maakt van camera om gezicht te kunnen anlyseren een de emoties te kunnen uit printen
+    #Daarvoor hebben we een deep learing model gebruikt die de pixel van de gezicht vergelijkt met getrinde data.
     face_classifier = cv2.CascadeClassifier(r'.\\images\\haarcascade_frontalface_default.xml')
     classifier = load_model(r'.\\images\\Emotion_little_vgg.h5')
 
@@ -332,9 +390,10 @@ def face_expressions():
 with open("steamdata.json",encoding= "utf-8" ) as f:
     data = json.load(f)
 
-
+#Quick sort algortime gebruikt om data te kunnen sorteren
 
 def partition(data, begin, end):
+
     pivot_idx = begin
     for i in range(begin+1, end+1):
         if data[i]["name"] <= data[begin]["name"]:
@@ -375,7 +434,7 @@ def quick_sort1(sequence):
 
     return quick_sort1(items_lower) + [pivot] + quick_sort1(items_greater)
 
-
+#functies om data op de main dashboard te laten zien zoals games names en first game
 
 def eerste_spel():
     global naam
@@ -392,7 +451,7 @@ def all_Games():
 
 
 
-
+# Hierbij zijn functies gemaakt om data beschrijving te kunnen maken en grafiken
 def mean(lst):
     lst = quick_sort1(lst)
     A = float(len(lst))
@@ -526,6 +585,7 @@ def describ(lst):
     return y
 
 def beschrijving_postive():
+    #beshrijving van positive ratings data
     servo_links()
     t = []
 
@@ -537,6 +597,7 @@ def beschrijving_postive():
 
 
 def beschrijving_price():
+    # beshrijving van price data
     servo_midden()
     t = []
 
@@ -548,6 +609,7 @@ def beschrijving_price():
     return describ(t[:900])
 
 def beschrijving_avr_playtim():
+    # beshrijving van avrage playtime data
     servo_rechts()
     t = []
 
@@ -560,7 +622,8 @@ def beschrijving_avr_playtim():
 
 
 def statstiek_price():
-    Vlag_blue(clock_pin, data_pin, 1, n=9)
+    #Een price digram
+    color_blue(clock_pin, data_pin, 1, n=9)
     HEIGHT = 480
     WIDTH = 640
     screen = tk.Toplevel()
@@ -593,7 +656,8 @@ def statstiek_price():
 
 
 def statstiek_postive():
-    Vlag_cyan(clock_pin, data_pin, 1, n=9)
+    #Top 5 games digram
+    color_cyan(clock_pin, data_pin, 1, n=9)
     HEIGHT = 480
     WIDTH = 640
     screen = tk.Toplevel()
@@ -619,7 +683,8 @@ def statstiek_postive():
     screen.mainloop()
 
 def statstiek_avrage():
-    Vlag_blue(clock_pin, data_pin, 1, n=9)
+    #top 4 games met lange speltijden digram
+    color_blue(clock_pin, data_pin, 1, n=9)
     HEIGHT = 480
     WIDTH = 640
     screen = tk.Toplevel()
@@ -648,15 +713,16 @@ def statstiek_avrage():
 
 HEIGHT = 700
 WIDTH = 1200
-def do_something(label,text):
+def configr(label,text):
     label.configure(text=text)
 def exit1():
-    Vlag_red(clock_pin, data_pin, 1, n=9)
+    color_red(clock_pin, data_pin, 1, n=9)
     return exit()
 
 
 def statistics():
-    Vlag_pink(clock_pin, data_pin, 1, n=9)
+    #Een statistics mode heeft zijn eigen dashboard hier bij is tkinter gebruikt
+    color_pink(clock_pin, data_pin, 1, n=9)
     top = tk.Toplevel()
 
     top.title("Steam Statistics")
@@ -681,14 +747,14 @@ def statistics():
     button3 = tk.Button(canvas, text=" Top 4 Games met lange speltijden" , command = lambda : statstiek_avrage(), bg = "#B456FF")
     button3.place(relx=0.14, rely=0.83, relwidth=0.18, relheight=0.10, anchor="n")
 
-    button4 = tk.Button(canvas, text = "Describ positive ratings" , command = lambda : do_something(label, beschrijving_postive()) ,bg = "#B456FF")
+    button4 = tk.Button(canvas, text = "Describ positive ratings" , command = lambda : configr(label, beschrijving_postive()) ,bg = "#B456FF")
     button4.place(relx=0.55, rely=0.83, relwidth=0.15, relheight=0.10, anchor="n")
     button5 = tk.Button(canvas, text="Describ average_playtime",
-                        command=lambda: do_something(label, beschrijving_avr_playtim()), bg = "#B456FF")
+                        command=lambda: configr(label, beschrijving_avr_playtim()), bg = "#B456FF")
     button5.place(relx=0.31, rely=0.83, relwidth=0.15, relheight=0.10, anchor="n")
 
     button6 = tk.Button(canvas, text="Describ Price",
-                       command=lambda: do_something(label, beschrijving_price()), bg = "#B456FF")
+                       command=lambda: configr(label, beschrijving_price()), bg = "#B456FF")
     button6.place(relx=0.44, rely=0.83, relwidth=0.10, relheight=0.10, anchor="n")
 
     button7 = tk.Button(canvas, text = "Exit", command = lambda: exit1(),  bg = "#B456FF")
@@ -700,6 +766,7 @@ def statistics():
     top.mainloop()
 
 def back(image_nu):
+    #Back functie om photos lib te kunnen  bladeren
 
 
     global photos_label
@@ -725,6 +792,8 @@ def back(image_nu):
 
 
 def forward(image_nu):
+    #forward functie om photos lib te kunnen  bladeren
+
     global photos_label
     global button_forward
     global button_back
@@ -743,7 +812,8 @@ def forward(image_nu):
 
 
 def paly():
-    Vlag_blue2(clock_pin, data_pin, 1, n=9)
+    #Functie om music te spelen
+    color_blue2(clock_pin, data_pin, 1, n=9)
     pygame.mixer.init()
     pygame.mixer.music.load("beat.mp3")
     pygame.mixer.music.play(loops=2)
@@ -751,14 +821,40 @@ def paly():
 
 
 def stop():
-    Vlag_red(clock_pin, data_pin, 1, n=9)
+    #Functie om music te stoppen
+    color_red(clock_pin, data_pin, 1, n=9)
     pygame.mixer.music.stop()
 
+def online_status():
+    #intractie dashboard die gebruik van afstandsensor en inputs maken
+    color_pink(clock_pin, data_pin, 1, n=9)
+
+    screen = tk.Toplevel()
+
+
+    filename = tk.PhotoImage(file="cover.png")
+
+    canvas = tk.Canvas(screen, height = HEIGHT, width = WIDTH)
+
+    image = canvas.create_image(0, 0, anchor='nw', image=filename)
+    canvas.pack()
+    label = tk.Label(canvas, text = "Welcome" ,font=("Courier", 20) , bg = "#A2D6EC")
+    label.place(relx=0.50, rely=0.10, relwidth=0.90, relheight=0.7,anchor="n")
+
+    button1 =  tk.Button(canvas, text = "afstand van steam !", bg="#B456FF", command = lambda : configr(label,afstand()))
+    button1.place(relx=0.80, rely=0.83, relwidth=0.15, relheight=0.10, anchor="n")
+
+    button2 = tk.Button(canvas, text="Online / Offline ", bg="#B456FF", command = lambda : configr(label,switches()))
+    button2.place(relx=0.44, rely=0.83, relwidth=0.15, relheight=0.10, anchor="n")
+
+
+    screen.mainloop()
 
 
 
 def Dashboard():
-    Vlag_wit(clock_pin, data_pin, 1, n=9)
+    #Main Dashboard Hier voor is tkinter gebruikt
+    color_wit(clock_pin, data_pin, 1, n=9)
     dashboard_screen = tk.Tk()
 
 
@@ -843,12 +939,21 @@ def Dashboard():
     play_button = tk.Button(music_label,text = "Play", command= lambda :paly()).pack(padx = 1 ,pady = 10)
     stop_button = tk.Button(music_label, text = "Stop", command= lambda :stop()).pack(pady = 20)
 
+    image13 = tk.PhotoImage(file="faceex.png")
+    photoimag3 = image13.subsample(15, 15)
+    image14 = tk.PhotoImage(file="statstiek.png")
+    photoimag4 = image14.subsample(9,9)
+    image15 = tk.PhotoImage(file="on.png")
+    photoimag5 = image15.subsample(5, 5)
 
-    face_button = tk.Button(canvas, text = "Face expressions" ,  command= lambda  :face_expressions())
+    face_button = tk.Button(canvas, text = "Face expressions" ,image = photoimag3  ,command= lambda  :face_expressions() , bg = "blue")
     face_button.place(relx=0.8, rely=0.1, relwidth=0.10, relheight=0.10, anchor="n")
 
-    Statstiek_button = tk.Button(canvas, text = "Go Statistics", command = lambda : statistics())
-    Statstiek_button.place(relx=0.8, rely=0.30, relwidth=0.10, relheight=0.10, anchor="n")
+    Statstiek_button = tk.Button(canvas, text = "Go Statistics", command = lambda : statistics(), bg = "white", image = photoimag4)
+    Statstiek_button.place(relx=0.8, rely=0.23, relwidth=0.10, relheight=0.10, anchor="n")
+
+    onlien_status_button = tk.Button(canvas, text="Online status", command=lambda: online_status(), image = photoimag5)
+    onlien_status_button.place(relx=0.8, rely=0.37, relwidth=0.10, relheight=0.10, anchor="n")
 
 
 
