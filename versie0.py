@@ -59,37 +59,31 @@ def servo_rechts():
     #Een functie waar bij servo naar recht wordt gedried
     p = GPIO.PWM(25, 50)
     p.start(2)
-    p.ChangeDutyCycle(2)
     time.sleep(0.48)
-    for i in range(0, 100, 1):
-        servo_rechts()
-    for i in range(100, 0, -1):
-        servo_rechts()
+    p.ChangeDutyCycle(2)
+
+    return
 
 
 def servo_links():
     # Een functie waar bij servo naar Links wordt gedried
     p = GPIO.PWM(25, 50)
     p.start(12)
-    p.ChangeDutyCycle(12)
     time.sleep(0.48)
-    for i in range(0, 100, 1):
-        servo_links()
-    for i in range(100, 0, -1):
-        servo_links()
+    p.ChangeDutyCycle(12)
+
+    return
+
 
 
 def servo_midden():
     # Een functie waar bij servo naar midden wordt gedried
     p = GPIO.PWM(25, 50)
     p.start(7)
-    p.ChangeDutyCycle(7)
     time.sleep(0.48)
-    for i in range(0, 100, 1):
-        servo_midden()
-    for i in range(100, 0, -1):
-        servo_midden()
+    p.ChangeDutyCycle(7)
 
+    return
 
 def hc595(shift_clock_pin, latch_clock_pin, data_pin1, value, delay):
     #Een functie om schuif register te gebruiken met afstandsensor
@@ -315,7 +309,6 @@ def switches():
             status = "ONLINE"
             color_green(clock_pin, data_pin, 1, n=9)
             tk.messagebox.showinfo("status", " U bent online")
-
             time.sleep(0.5)
 
 
@@ -323,7 +316,6 @@ def switches():
             GPIO.output(led, GPIO.LOW)
             color_red(clock_pin, data_pin, 1, n=9)
             tk.messagebox.showinfo("status", " U bent offline")
-
             status = "OFFLINE"
             time.sleep(0.5)
 
@@ -617,7 +609,9 @@ def beschrijving_avr_playtim():
         y = x["average_playtime"]
         t.append(y)
 
-    return describ(t[:900])
+    f = describ(t[:900])
+
+    return f
 
 
 
@@ -684,7 +678,7 @@ def statstiek_postive():
 
 def statstiek_avrage():
     #top 4 games met lange speltijden digram
-    color_blue(clock_pin, data_pin, 1, n=9)
+    color_green(clock_pin, data_pin, 1, n=9)
     HEIGHT = 480
     WIDTH = 640
     screen = tk.Toplevel()
@@ -750,7 +744,7 @@ def statistics():
     button4 = tk.Button(canvas, text = "Describ positive ratings" , command = lambda : configr(label, beschrijving_postive()) ,bg = "#B456FF")
     button4.place(relx=0.55, rely=0.83, relwidth=0.15, relheight=0.10, anchor="n")
     button5 = tk.Button(canvas, text="Describ average_playtime",
-                        command=lambda: configr(label, beschrijving_avr_playtim()), bg = "#B456FF")
+                        command = lambda: configr(label, beschrijving_avr_playtim()), bg = "#B456FF")
     button5.place(relx=0.31, rely=0.83, relwidth=0.15, relheight=0.10, anchor="n")
 
     button6 = tk.Button(canvas, text="Describ Price",
