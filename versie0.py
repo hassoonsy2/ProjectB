@@ -191,7 +191,7 @@ def afstand():
             hc595(shift_clock_pin, latch_clock_pin, data_pin1, 2, delay)
             hc595(shift_clock_pin, latch_clock_pin, data_pin1, 1, delay)
             break
-        if y <= 5.0:
+        if y <= 10.0:
             color_red(clock_pin, data_pin, 1, n=9)
             tk.messagebox.showwarning("Afstand ", "Je bent te dicht bij neem afstand")
         else:
